@@ -1,0 +1,2 @@
+18-01-2022: Created new "renderer" file in which we draw a background, clear the window, and draw a rectangle. Drawing a rectangle in a certain 
+range though because for some reason my clamp isn't working (throws an exception). Will work on that tomorrow.
