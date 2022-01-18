@@ -1,6 +1,11 @@
 #include <windows.h>
 
 bool running = true;
+void* buffer_memory;
+int buffer_size;
+int buffer_width;
+int buffer_height;
+
 
 LRESULT CALLBACK window_callback (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
@@ -8,8 +13,18 @@ LRESULT CALLBACK window_callback (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 	switch (uMsg) {
 		case WM_CLOSE:
-		case WM_DESTROY: {
+		case WM_DESTROY: { // case if user wants to close the window
 			running = false;
+		} break;
+		case WM_SIZE: { // case if user decides to resize the window
+			RECT rect;
+			GetClientRect(hwnd, &rect);
+			buffer_width = rect.right - rect.left;
+			buffer_height = rect.bottom - rect.top;
+			buffer_size = buffer_width * buffer_height * sizeof(unsigned int); // 32 bits, 8 for red, blue, green, padding to get to 32
+
+			if (buffer_memory) VirtualFree(buffer_memory, 0, MEM_RELEASE); // if there is already memory, we should free first with VirtualFree
+			buffer_memory = VirtualAlloc(0, buffer_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 		} break;
 
 		default: {
